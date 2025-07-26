@@ -1,0 +1,155 @@
+tab1:
+  - unit: مدیرعامل
+    name: حاج آقا وثوقی
+    internal: "۳۰۰"
+    external: "۷"
+  - unit: دفتر مدیریت
+    name: خانم حیدری
+    internal: "۳۰۱"
+    external: "۱"
+  - unit: مدیر پروژه
+    name: آقای ایزدی
+    internal: "۳۰۲"
+    external: "۶"
+  - unit: فروش
+    name: خانم شریفیان -خانم فلاح
+    internal: "۳۰۳"
+    external: "۲"
+  - unit: حسابداری
+    name: آقای ملایی
+    internal: "۳۰۴"
+    external: "۱۱"
+  - unit: منابع انسانی
+    name: خانم حسینی
+    internal: "۳۰۵"
+    external: "۴"
+  - unit: برنامه‌ریزی
+    name: آقای فارسی - خانم شریفی
+    internal: "۳۰۶"
+    external: "۵"
+  - unit: مدیر حسابداری
+    name: آقای طالقانی
+    internal: "۳۰۷"
+    external: "۳"
+  - unit: انبار محصول
+    name: آقای پورعباس
+    internal: "۳۰۸"
+    external: "۸"
+  - unit: نگهبانی
+    name: ""
+    internal: "۳۰۹"
+    external: "۹"
+  - unit: مدیر تولید
+    name: آقای ایزدی
+    internal: "۳۱۰"
+    external: "۱۰"
+  - unit: فناوری اطلاعات
+    name: آقای صباغ
+    internal: "۳۱۱"
+    external: "۰"
+  - unit: تامین مواد اولیه
+    name: خانم کمالی
+    internal: "۳۱۲"
+    external: "۱۲"
+  - unit: حسابداری
+    name: خانم ترقیخواه
+    internal: "۳۱۳"
+    external: "۱۳"
+  - unit: معاون مدیرعامل
+    name: آقای جعفری
+    internal: "۳۱۴"
+    external: "۱۴"
+  - unit: مدیر نگهداری و تعمیر
+    name: آقای صفاری
+    internal: "۳۱۵"
+    external: "۱۵"
+  - unit: مدیر لجستیک
+    name: آقای حسینی
+    internal: "۳۱۶"
+    external: "۱۶"
+  - unit: مدیر کنترل کیفیت
+    name: خام رنجبر
+    internal: "۳۲۰"
+    external: "۲۰"
+  - unit: کنفرانس
+    name: اتاق مجازی کنفرانس
+    internal: "۳۹۹"
+    external: "۹۹"
+
+tab2:
+  - unit: مدیریت
+    name: حمیدرضا وثوقی
+    internal: "777"
+    external: "777"
+  - unit: منابع انسانی
+    name: صبا بخشایش
+    internal: "770"
+    external: "770"
+  - unit: مدیر عامل
+    name: امیر پورمحمد
+    internal: "909"
+    external: "909"
+  - unit: ""
+    name: مریم مهرآفرین
+    internal: "707"
+    external: "707"
+  - unit: ""
+    name: هدیه استادرحیمی
+    internal: "707"
+    external: "707"
+  - unit: ""
+    name: آیدا حامی
+    internal: "707"
+    external: "707"
+  - unit: ""
+    name: آقای معین بهشتی
+    internal: "733"
+    external: "733"
+  - unit: معاونت مالی و اداری
+    name: محمد عقیلی
+    internal: "100"
+    external: "100"
+  - unit: رئیس حسابداری
+    name: جواد سمیعی
+    internal: "102"
+    external: "102"
+  - unit: منابع انسانی
+    name: ماریه قادری
+    internal: "101"
+    external: "101"
+  - unit: کارشناس مالی
+    name: فاطمه ربیعی
+    internal: "103"
+    external: "103"
+  - unit: ""
+    name: رضانوایی - خندانی
+    internal: "103"
+    external: "103"
+  - unit: معاونت فروش
+    name: امیرعبدالوند
+    internal: "200"
+    external: "200"
+  - unit: مدیر فروش مویرگی
+    name: علی نوروزپور
+    internal: "201"
+    external: "201"
+  - unit: سرپرست فروش
+    name: محمدرضا جمالی
+    internal: "202"
+    external: "202"
+  - unit: واحد نمایندگی
+    name: پارسا پورحسن
+    internal: "203, 205"
+    external: "203"
+  - unit: سرپرست فروش
+    name: امیر احمدی فر
+    internal: "206"
+    external: "206"
+  - unit: انبار تردیلا
+    name: سامیار داوری
+    internal: "220"
+    external: "220"
+  - unit: فناوری اطلاعات
+    name: علی سلطانی
+    internal: "222"
+    external: "222"

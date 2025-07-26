@@ -1,0 +1,165 @@
+
+/* استایل‌های عمومی */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+h2 {
+    color: black;
+}
+
+/* استایل‌های منو */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+#menu {
+    transition: all 0.3s ease-in-out;
+}
+
+.group > button {
+    padding-bottom: 6px; /* فاصله برای کاهش گپ بین دکمه و زیرمنو */
+}
+
+.group > ul {
+    right: 0;
+    min-width: 200px;
+    display: none;
+    transform: translateY(-5px);
+    opacity: 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    margin-top: -2px; /* همپوشانی جزئی برای جلوگیری از گپ */
+}
+
+.group:hover > ul,
+.group > ul:hover {
+    display: block;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* استایل‌های گرید دکمه‌ها */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* چهار ستون */
+    gap: 20px; /* فاصله بین دکمه‌ها */
+}
+
+.grid-container a {
+    text-decoration: none;
+    color: black;
+    background-color: #EEEEEE;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.grid-container a:hover {
+    background-color: #45a049;
+}
+
+/* استایل‌های اخبار */
+.news-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-right: 5px solid #4CAF50;
+}
+
+/* استایل‌های جدول کارمندان */
+.employees table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.employees th, .employees td {
+    padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+}
+
+.employees th, .employees td {
+    padding: 12px;
+    text-align: right;
+    border: 1px solid #ddd; /* Add this instead of just border-bottom */
+}
+/* استایل‌های تب‌ها */
+.tabs {
+    margin: 20px;
+}
+
+.tabs .tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tabs .tab-buttons button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #EEEEEE;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+.tabs .tab-buttons button:hover {
+    background-color: #45a049;
+}
+
+.tabs .tab-buttons button.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+ .tabs .tab-content {
+    display: none;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+.tabs .tab-content.active {
+    display: block;
+}
+
+/* استایل‌های پاسخ‌گویی برای موبایل */
+@media (max-width: 768px) {
+    #menu {
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        background-color: #2563eb;
+        padding: 1rem;
+    }
+    #menu li {
+        margin: 0.5rem 0;
+    }
+    .group > ul {
+        position: static;
+        display: none;
+        background-color: #1e40af;
+        padding: 0.5rem;
+        transform: none;
+        opacity: 1;
+        margin-top: 0;
+    }
+    .group:hover > ul,
+    .group > ul:hover {
+        display: block;
+    }
+    .grid-container {
+        grid-template-columns: 1fr; /* یک ستون در موبایل */
+    }
+}

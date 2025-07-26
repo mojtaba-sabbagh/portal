@@ -1,0 +1,14 @@
+- category: سامانه جامع تجارت
+  videos:
+    - label: بخش اول
+      src: /videos/ch01.m4v
+    - label: بخش دوم
+      src: /videos/ch02.m4v
+    - label: بخش سوم
+      src: /videos/ch03.m4v
+    - label: بخش چهارم
+      src: /videos/ch04.m4v
+    - label: بخش پنجم
+      src: /videos/ch05.m4v
+    - label: بخش ششم
+      src: /videos/ch06.m4v
