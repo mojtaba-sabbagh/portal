@@ -3,7 +3,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack",
-    "start": "next start"
+    "start": "next start -p 3000"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -11,8 +11,10 @@
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
+    "js-yaml": "^4.1.0",
     "next": "latest",
     "next-auth": "5.0.0-beta.25",
+    "nodemailer": "^6.10.1",
     "postcss": "8.5.1",
     "postgres": "^3.4.6",
     "react": "latest",
@@ -24,7 +26,9 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "22.10.7",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3"
   },

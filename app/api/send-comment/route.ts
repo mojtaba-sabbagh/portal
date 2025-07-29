@@ -20,8 +20,8 @@ export async function POST(req: Request) {
   try {
     await transporter.sendMail({
       from: '"پیشنهادات" <comments@vru.ac.ir>',
-      to: ['mojtaba.sabbagh@tordilla.ir'],//['m.jafari@tordilla.ir', 'h.vosoughi@tordilla.ir'],
-      //bcc: 'mojtaba.sabbagh@tordilla.ir',
+      to: ['m.jafari@tordilla.ir', 'h.vosoughi@tordilla.ir'],
+      bcc: 'mojtaba.sabbagh@tordilla.ir',
       subject: subject,
       text: message,
     });
