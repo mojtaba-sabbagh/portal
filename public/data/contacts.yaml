@@ -12,7 +12,7 @@ tab1:
     internal: "۳۰۲"
     external: "۶"
   - unit: فروش
-    name: خانم شریفیان -خانم فلاح
+    name: خانم فلاح
     internal: "۳۰۳"
     external: "۲"
   - unit: حسابداری
@@ -59,14 +59,14 @@ tab1:
     name: آقای جعفری
     internal: "۳۱۴"
     external: "۱۴"
-  - unit: مدیر نگهداری و تعمیر
-    name: آقای صفاری
-    internal: "۳۱۵"
-    external: "۱۵"
-  - unit: مدیر لجستیک
-    name: آقای حسینی
+  - unit: مدیران تعمیرنگهداری و لجستیک
+    name: آقای صفاری و حسینی
     internal: "۳۱۶"
     external: "۱۶"
+  - unit: حسابداری
+    name: خانم شریفیان
+    internal: "۳۱۷"
+    external: "۱۷"
   - unit: مدیر کنترل کیفیت
     name: خام رنجبر
     internal: "۳۲۰"
