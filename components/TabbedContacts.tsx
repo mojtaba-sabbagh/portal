@@ -1,4 +1,3 @@
-// components/TabbedContacts.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import yaml from 'js-yaml';
@@ -28,45 +27,64 @@ export default function TabbedContacts() {
 
   function renderTable(data: Contact[]) {
     return (
-      <table className="table-auto w-full border border-gray-300">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-2 py-1">واحد</th>
-            <th className="border px-2 py-1">نام کامل</th>
-            <th className="border px-2 py-1">شماره داخلی</th>
-            <th className="border px-2 py-1">شماره از بیرون</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, idx) => (
-            <tr key={idx}>
-              <td className="border px-2 py-1">{row.unit}</td>
-              <td className="border px-2 py-1">{row.name}</td>
-              <td className="border px-2 py-1">{row.internal}</td>
-              <td className="border px-2 py-1">{row.external}</td>
+      <div className="lg:w-2/3 mx-auto overflow-x-auto">
+        <table className="table-fixed w-full text-sm text-center border border-gray-300 rounded shadow-sm">
+          <thead className="bg-blue-100 text-gray-800">
+            <tr>
+              <th className="w-1/4 px-2 py-2">واحد</th>
+              <th className="w-1/4 px-2 py-2">نام کامل</th>
+              <th className="w-1/4 px-2 py-2">شماره داخلی</th>
+              <th className="w-1/4 px-2 py-2">شماره بیرونی</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((row, idx) => (
+              <tr
+                key={idx}
+                className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+              >
+                <td className="px-2 py-2">{row.unit}</td>
+                <td className="px-2 py-2">{row.name}</td>
+                <td className="px-2 py-2">{row.internal}</td>
+                <td className="px-2 py-2">{row.external}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
   return (
-    <div className="tabs employees mt-8">
-      <div className="tab-buttons flex gap-2 mb-4">
-        <button onClick={() => setActiveTab('tab1')} className={`px-4 py-2 rounded ${activeTab === 'tab1' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+    <div className="tabs employees mt-10">
+      <div className="tab-buttons flex gap-2 mb-5 justify-center">
+        <button
+          onClick={() => setActiveTab('tab1')}
+          className={`px-4 py-2 rounded shadow-sm font-medium ${
+            activeTab === 'tab1'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+          }`}
+        >
           تلفن‌های کوثر کویر رفسنجان
         </button>
-        <button onClick={() => setActiveTab('tab2')} className={`px-4 py-2 rounded ${activeTab === 'tab2' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+        <button
+          onClick={() => setActiveTab('tab2')}
+          className={`px-4 py-2 rounded shadow-sm font-medium ${
+            activeTab === 'tab2'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+          }`}
+        >
           تلفن‌های هاگ
         </button>
       </div>
 
-      <div className={`tab-content ${activeTab === 'tab1' ? 'block' : 'hidden'}`}>
+      <div className={activeTab === 'tab1' ? 'block' : 'hidden'}>
         {renderTable(tab1Data)}
       </div>
 
-      <div className={`tab-content ${activeTab === 'tab2' ? 'block' : 'hidden'}`}>
+      <div className={activeTab === 'tab2' ? 'block' : 'hidden'}>
         {renderTable(tab2Data)}
       </div>
     </div>

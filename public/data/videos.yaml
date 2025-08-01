@@ -1,7 +1,5 @@
 - category: سامانه جامع تجارت
   videos:
-    - label: بخش اول
-      src: /videos/ch01.m4v
     - label: بخش دوم
       src: /videos/ch02.m4v
     - label: بخش سوم
@@ -12,3 +10,9 @@
       src: /videos/ch05.m4v
     - label: بخش ششم
       src: /videos/ch06.m4v
+    - label: بخش اول
+      src: /videos/ch01.m4v
+- category: آموزش سپیدار
+  videos:
+    - label: صدور فاکتور
+      src: videos/factor.mp4

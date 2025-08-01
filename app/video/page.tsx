@@ -9,7 +9,6 @@ import VideoSection from '@/components/VideoSection';
 export default function VideoPage() {
   return (
     <main className="bg-gray-100 font-yekan">
-      <Header />
       <Navbar />
       <div className="container mx-auto px-4 py-5 bg-white shadow-md">
         <VideoSection />
