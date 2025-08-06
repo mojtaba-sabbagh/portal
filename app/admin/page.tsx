@@ -36,7 +36,7 @@ export default function AdminPage() {
         <h1 className="text-2xl font-bold mb-6">خوش آمدی {adminName}</h1>
         <p className="text-gray-600 mb-4">یک بخش برای مدیریت انتخاب کنید:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {['banner', 'news', 'telephone', 'videos'].map((section) => (
+          {['banner', 'news', 'contacts', 'videos'].map((section) => (
             <button
               key={section}
               className="bg-blue-600 hover:bg-blue-700 text-white py-4 rounded text-lg"
