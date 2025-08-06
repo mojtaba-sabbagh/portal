@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     secure: false,
     auth: {
       user: 'comments@vru.ac.ir',
-      pass: process.env.EMAIL_HOST_PASSWORD || 'Comm@1404Tord', // Set this in .env.local
+      pass: process.env.EMAIL_HOST_PASSWORD || '', // Set this in .env.local
     },
     tls: {
       rejectUnauthorized: false, // Use with caution
