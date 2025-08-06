@@ -24,7 +24,7 @@ export default function AdminPage() {
   const sectionTitles: Record<string, string> = {
     banner: 'بنرهای سایت',
     news: 'اخبار',
-    telephone: 'تلفن‌ها',
+    contacts: 'تلفن‌ها',
     videos: 'ویدئوها',
   };
 
