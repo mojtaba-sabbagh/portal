@@ -4,7 +4,7 @@ export default function PortalGrid() {
     { href: 'https://taskulu.com/...', text: 'سامانه مدیریت پروژه' },
     { href: 'https://bpms.hugco.ir:8182/...', text: 'مدیریت فرآیند' },
     { href: 'https://atlas.tordilla.ir', text: 'سامانه منابع انسانی' },
-    { href: 'https://3002048066.cloudylink.com:2096/...', text: 'سامانه ایمیل' },
+    { href: 'https://mail.tordilla.ir:2096/...', text: 'سامانه ایمیل' },
     { href: 'https://www.tordillafood.com/', text: 'وب سایت ترددیلا' },
     { href: 'http://desk.palizco.net/', text: 'سامانه پشتیبانی' },
     { href: '/suggestion', text: 'سامانه پیشنهادات' },
