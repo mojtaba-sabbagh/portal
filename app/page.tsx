@@ -7,18 +7,19 @@ import PortalGrid from '@/components/PortalGrid';
 import News from '@/components/News';
 import TabbedContacts from '@/components/TabbedContacts';
 import Footer from '@/components/Footer';
+import SlidingBanner from '@/components/SlidingBanner';
 
 export default function Home() {
   return (
     <main className="bg-gray-100 font-yekan">
-      <Header />
+      <SlidingBanner />
       <Navbar />
       <div className="container mx-auto px-4 py-5 bg-white shadow-md">
         <h2>سامانه‌ها</h2>
         <PortalGrid />
         <News />
         <TabbedContacts />
-        <div className="mt-8">
+        <div className="mt-8 text-center text-gray-700">
           <p>تلفن‌های شرکت کوثر کویر رفسنجان:</p>
           <p>034-34287871, 34287872, 34288338, 34288339, 09426002408</p>
         </div>
