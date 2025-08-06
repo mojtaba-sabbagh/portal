@@ -44,7 +44,7 @@ export default function Header() {
               <Link href="/admin" className="text-blue-600 hover:underline">{adminName}</Link>
               </>
           ) : (
-            <Link href="/login" className="text-blue-600 hover:underline">ورود</Link>
+            <Link href="/admin/login" className="text-blue-600 hover:underline">ورود</Link>
         )}
 
         </div>

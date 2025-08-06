@@ -35,7 +35,7 @@ export default function SlidingBanner() {
   const banner = banners[currentIndex];
 
   return (
-    <div className="relative w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px] overflow-hidden">
+    <div className="relative w-full h-[195px] sm:h-[275px] md:h-[450px] lg:h-[500px] overflow-hidden">
       <Link href={banner.link}>
         <div className="absolute inset-0 transition-opacity duration-700">
           <img
