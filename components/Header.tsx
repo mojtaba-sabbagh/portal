@@ -30,10 +30,11 @@ export default function Header() {
         </div>
 
         {/* Center: Title */}
-        <h1 className="text-lg font-semibold text-center flex-grow text-black">
+        <Link href="/">
+          <h1 className="text-lg font-semibold text-center flex-grow text-black">
           پرتال شرکت کوثر کویر رفسنجان
-        </h1>
-
+          </h1>
+        </Link>
         {/* Left: Language + Login/Logout */}
         <div className="flex items-center gap-4 text-sm">
           {adminName ? (
