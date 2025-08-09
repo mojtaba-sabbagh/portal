@@ -13,12 +13,22 @@ export default function PortalGrid() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-      {portals.map(({ href, text }) => (
+      {portals.map(({ href, text }, index) => (
         <a
           key={href}
           href={href}
           target="_blank"
-          className="text-black bg-gray-200 py-5 px-4 text-center rounded-lg hover:bg-green-600 transition-colors"
+          rel="noopener noreferrer"
+          className="text-black bg-gray-200 py-5 px-4 text-center rounded-lg 
+                    hover:bg-green-600 hover:text-white hover:shadow-lg
+                    transition-all duration-300 ease-in-out 
+                    transform hover:-translate-y-1
+                    animate-fadeInUp"
+          style={{
+            animationDelay: `${index * 100}ms`,
+            opacity: 0,
+            animationFillMode: 'forwards'
+          }}
         >
           {text}
         </a>
