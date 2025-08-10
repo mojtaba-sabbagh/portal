@@ -85,6 +85,9 @@ export default function TabbedContacts() {
       </div>
 
       <div className={activeTab === 'tab2' ? 'block' : 'hidden'}>
+        <div className="text-center mb-4 text-lg font-medium">
+          تلفن هاگ: ۰۹۱۰۷۲۶۶۷
+        </div>
         {renderTable(tab2Data)}
       </div>
     </div>
