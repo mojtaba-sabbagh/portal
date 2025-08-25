@@ -86,15 +86,20 @@ export default function Navbar() {
           {menus.map((menu, idx) => (
             <li key={idx} className="relative group">
               <button className="py-2 px-10 hover:bg-blue-700 focus:outline-none" aria-haspopup="true">{menu.title}</button>
-              <ul className="absolute hidden group-hover:block bg-blue-600 text-white mt-2 rounded shadow-lg z-50">
+              <ul className="absolute hidden group-hover:block bg-blue-600 text-white top-full left-0 rounded shadow-lg z-50">
                 {menu.items.map((item, subIdx) => (
                   <li key={subIdx}>
-                    <a href={item.href} target="_blank" className="block py-2 px-4 hover:bg-blue-700">
-                      {item.text}
-                    </a>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    className="block py-2 px-4 hover:bg-blue-700"
+                    >
+                    {item.text}
+                  </a>
                   </li>
                 ))}
               </ul>
+
             </li>
           ))}
         </ul>
