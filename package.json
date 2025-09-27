@@ -31,6 +31,7 @@
     "@types/node": "22.10.7",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "19.0.7",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "19.0.3"
   },
   "pnpm": {
