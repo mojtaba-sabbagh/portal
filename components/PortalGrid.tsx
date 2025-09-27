@@ -9,6 +9,7 @@ export default function PortalGrid() {
     { href: 'http://desk.palizco.net/', text: 'سامانه پشتیبانی' },
     { href: '/suggestion', text: 'سامانه پیشنهادات' },
     { href: '/video', text: 'محتواهای آموزشی' },
+    { href: 'https://forms.tordilla.ir', text: 'سامانه فرم‌های سازمانی' },
   ];
 
   return (
