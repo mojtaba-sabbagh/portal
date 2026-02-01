@@ -23,6 +23,13 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_PASSWORD=Tordilla1404
+ENV EMAIL_HOST_PASSWORD=PsCus1444Kord
+
+# Copy .env.local for reference
+COPY .env.local .env.local
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
