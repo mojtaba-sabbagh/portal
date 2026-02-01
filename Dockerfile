@@ -15,20 +15,20 @@ COPY .env.local .env.local
 RUN set -a && . ./.env.local && set +a
 
 # Disable TurboPack and ignore type checking
-ENV NEXT_TURBO 0
-ENV NEXT_IGNORE_TYPECHECK 1
+ENV NEXT_TURBO=0
+ENV NEXT_IGNORE_TYPECHECK=1
 
 RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV ADMIN_USERNAME=admin
-ENV ADMIN_PASSWORD=Tordilla1404
-ENV EMAIL_HOST_PASSWORD=PsCus1444Kord
 
-# Copy .env.local for reference
+# Copy .env.local for environment variables
 COPY .env.local .env.local
+
+# Load environment variables from .env.local at runtime
+RUN set -a && . ./.env.local && set +a
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
