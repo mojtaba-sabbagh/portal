@@ -10,6 +10,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Load environment variables from .env.local
+COPY .env.local .env.local
+RUN set -a && . ./.env.local && set +a
+
 # Disable TurboPack and ignore type checking
 ENV NEXT_TURBO 0
 ENV NEXT_IGNORE_TYPECHECK 1
