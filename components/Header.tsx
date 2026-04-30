@@ -6,16 +6,32 @@ import { useEffect, useState } from 'react';
 
 export default function Header() {
   const [adminName, setAdminName] = useState<string | null>(null);
+  const [portalEmail, setPortalEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const name = localStorage.getItem('adminName');
     setAdminName(name);
+
+    fetch('/api/auth/me')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (data?.user?.email) {
+          setPortalEmail(data.user.email);
+        }
+      })
+      .catch(() => setPortalEmail(null));
   }, []);
 
-  const handleLogout = () => {
+  const handleAdminLogout = () => {
     localStorage.removeItem('adminName');
     document.cookie = 'adminName=; Max-Age=0; path=/'; // remove cookie if used
     window.location.href = '/admin/login';
+  };
+
+  const handlePortalLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setPortalEmail(null);
+    window.location.href = '/';
   };
 
   return (
@@ -40,15 +56,28 @@ export default function Header() {
         
         {/* Left: Language + Login/Logout */}
         <div className="flex items-center gap-4 text-sm">
+          {portalEmail ? (
+            <>
+              <button onClick={handlePortalLogout} className="text-red-600 hover:underline">
+                خروج
+              </button>
+              <span className="max-w-40 truncate text-gray-700" dir="ltr" title={portalEmail}>
+                {portalEmail}
+              </span>
+            </>
+          ) : (
+            <Link href="/login" className="text-blue-600 hover:underline">ورود یکپارچه</Link>
+          )}
+
           {adminName ? (
             <>
-              <button onClick={handleLogout} className="text-red-600 pl-4 hover:underline">
-                خروج 
+              <button onClick={handleAdminLogout} className="text-red-600 pl-4 hover:underline">
+                خروج مدیر
               </button>
               <Link href="/admin" className="text-blue-600 hover:underline">{adminName}</Link>
               </>
           ) : (
-            <Link href="/admin/login" className="text-blue-600 hover:underline">ورود</Link>
+            <Link href="/admin/login" className="text-blue-600 hover:underline">مدیر</Link>
         )}
 
         </div>

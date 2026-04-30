@@ -1,13 +1,23 @@
 // components/PortalGrid.tsx
 export default function PortalGrid() {
+  const portalUrl = process.env.NEXT_PUBLIC_PORTAL_URL || 'http://localhost:4000';
+  const buildSsoUrl = (clientId: string, redirectUri: string) => {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+    });
+
+    return `/sso/authorize?${params.toString()}`;
+  };
+
   const portals = [
     { href: 'https://taskulu.com/', text: 'سامانه مدیریت پروژه' },
     { href: 'https://bpms.hugco.ir:8182/', text: 'مدیریت فرآیند' },
     { href: 'https://atlas.tordilla.ir', text: 'سامانه منابع انسانی' },
     { href: 'https://mail.tordilla.ir:2096/', text: 'سامانه ایمیل' },
-    { href: 'https://www.tordillafood.com/', text: 'وب سایت ترددیلا' },
+    { href: 'https://www.tordilla.ir/', text: 'وب سایت ترددیلا' },
     { href: 'http://desk.palizco.net/', text: 'سامانه پشتیبانی' },
-    { href: '/suggestion', text: 'سامانه پیشنهادات' },
+    { href: buildSsoUrl('suggestion', `${portalUrl}/suggestion`), text: 'سامانه پیشنهادات' },
     { href: '/video', text: 'محتواهای آموزشی' },
     { href: 'https://forms.tordilla.ir', text: 'سامانه فرم‌های سازمانی' },
   ];
@@ -18,7 +28,7 @@ export default function PortalGrid() {
         <a
           key={href}
           href={href}
-          target="_blank"
+          target={href.startsWith('/') ? undefined : '_blank'}
           rel="noopener noreferrer"
           className="text-black bg-gray-200 py-5 px-4 text-center rounded-lg 
                     hover:bg-green-600 hover:text-white hover:shadow-lg
