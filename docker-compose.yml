@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: portal_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-portal}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-Msj.116159}
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - portal_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portal_app
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-Msj.116159}@postgres:5432/${DB_NAME:-portal}?schema=public
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Tordilla1404}
+      SMTP_HOST: ${SMTP_HOST:-smtp.tordilla.ir}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      SMTP_USER: ${SMTP_USER:-it@tordilla.ir}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-Tordilla1405}
+      SMTP_FROM: ${SMTP_FROM:-it@tordilla.ir}
+      SMTP_SSL_HOST: ${SMTP_SSL_HOST:-s310.bitcommand.com}
+      SMTP_TLS_SERVERNAME: ${SMTP_TLS_SERVERNAME:-s310.bitcommand.com}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - portal_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  portal_network:
+    driver: bridge
