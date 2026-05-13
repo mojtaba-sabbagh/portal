@@ -1,13 +1,21 @@
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import pg from 'pg';
 
-let prisma: PrismaClient;
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-export function getDb() {
-  if (!prisma) {
-    prisma = new PrismaClient();
+export const getDb = () => {
+  if (!globalForPrisma.prisma) {
+    const pool = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+    const adapter = new PrismaPg(pool);
+    globalForPrisma.prisma = new PrismaClient({ adapter });
   }
-  return prisma;
-}
+  return globalForPrisma.prisma;
+};
 
 // Banners
 export async function getBanners() {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getContacts, getDb } from '@/lib/db';
 
 export async function GET() {
+
+  console.log('DATABASE_URL exists?', !!process.env.DATABASE_URL);
   try {
     const data = await getContacts();
     return NextResponse.json(data);

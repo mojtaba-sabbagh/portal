@@ -36,6 +36,9 @@ export default function TabbedContacts() {
   const currentData = allContacts[activeTab] || [];
 
   function renderTable(data: Contact[]) {
+    if (!Array.isArray(data)) {
+          return <div className="text-center text-red-500">Invalid data format</div>;
+    }
     return (
       <div className="lg:w-2/3 mx-auto overflow-x-auto">
         <table className="table-fixed w-full text-sm text-center border border-gray-300 rounded shadow-sm">

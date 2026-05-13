@@ -3,8 +3,6 @@ npm-debug.log
 .next
 .git
 .gitignore
-.env
-.env.local
 README.md
 DOCKER_DEPLOYMENT.md
 MIGRATION_GUIDE.md
@@ -12,10 +10,10 @@ MIGRATION_SUMMARY.md
 .dockerignore
 Dockerfile
 docker-compose.yml
-docker-entrypoint.sh
 .vscode
 .DS_Store
 *.md
+.env
 .env.example
 pnpm-debug.log
 public/data
