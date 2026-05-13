@@ -4,15 +4,17 @@ import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Banner {
+  id: number;
   title: string;
   image: string;
   link: string;
+  order_index?: number;
 }
 
 export default function BannerAdminPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
-  const [form, setForm] = useState<Banner>({ title: '', image: '', link: '' });
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [form, setForm] = useState<Omit<Banner, 'id'>>({ title: '', image: '', link: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -26,14 +28,14 @@ export default function BannerAdminPage() {
     loadBanners();
   }, []);
 
-  const handleChange = (field: keyof Banner, value: string) => {
+  const handleChange = (field: keyof Omit<Banner, 'id'>, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const resetForm = () => {
     setForm({ title: '', image: '', link: '' });
     setFile(null);
-    setEditingIndex(null);
+    setEditingId(null);
     setErrors([]);
   };
 
@@ -44,7 +46,7 @@ export default function BannerAdminPage() {
     if (file) {
       const validTypes = ['image/png', 'image/jpeg'];
       if (!validTypes.includes(file.type)) errs.push('فقط PNG یا JPG مجاز است.');
-      if (file.size > 5120 * 1024) errs.push('اندازه تصویر باید کمتر از 1MB باشد.');
+      if (file.size > 5120 * 1024) errs.push('اندازه تصویر باید کمتر از 5MB باشد.');
     }
     setErrors(errs);
     return errs.length === 0;
@@ -71,30 +73,31 @@ export default function BannerAdminPage() {
     const payload = { ...form, image: imagePath };
 
     await fetch('/api/banners', {
-      method: editingIndex === null ? 'POST' : 'PUT',
+      method: editingId === null ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        editingIndex === null ? payload : { index: editingIndex, banner: payload }
-      ),
+      body: JSON.stringify(editingId === null ? payload : { id: editingId, ...payload }),
     });
 
     resetForm();
     loadBanners();
   };
 
-  const handleDelete = async (index: number) => {
+  const handleDelete = async (id: number) => {
     await fetch('/api/banners', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ index }),
+      body: JSON.stringify({ id }),
     });
     loadBanners();
   };
 
-  const startEdit = (index: number) => {
-    setEditingIndex(index);
-    setForm(banners[index]);
-    setFile(null);
+  const startEdit = (id: number) => {
+    const banner = banners.find(b => b.id === id);
+    if (banner) {
+      setEditingId(id);
+      setForm({ title: banner.title, image: banner.image, link: banner.link });
+      setFile(null);
+    }
   };
 
   const onDragEnd = async (result: any) => {
@@ -104,11 +107,16 @@ export default function BannerAdminPage() {
     reordered.splice(result.destination.index, 0, moved);
     setBanners(reordered);
 
-    // Save new order
+    // Save new order with IDs
+    const reorderData = reordered.map((banner, index) => ({
+      id: banner.id,
+      order: index,
+    }));
+    
     await fetch('/api/banners/reorder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reordered),
+      body: JSON.stringify(reorderData),
     });
   };
 
@@ -126,7 +134,7 @@ export default function BannerAdminPage() {
                 className="space-y-4"
                 >
                 {banners.map((banner, idx) => (
-                    <Draggable key={String(idx)} draggableId={String(idx)} index={idx}>
+                    <Draggable key={String(banner.id)} draggableId={String(banner.id)} index={idx}>
                     {(providedDraggable) => (
                         <div
                         ref={providedDraggable.innerRef}
@@ -141,8 +149,8 @@ export default function BannerAdminPage() {
                         <h2 className="font-semibold">{banner.title}</h2>
                         <p className="text-sm text-blue-600">{banner.link}</p>
                         <div className="mt-2 flex gap-4 rtl:space-x-reverse">
-                            <button onClick={() => startEdit(idx)} className="text-yellow-600 hover:underline">ویرایش</button>
-                            <button onClick={() => handleDelete(idx)} className="text-red-600 hover:underline">حذف</button>
+                            <button onClick={() => startEdit(banner.id)} className="text-yellow-600 hover:underline">ویرایش</button>
+                            <button onClick={() => handleDelete(banner.id)} className="text-red-600 hover:underline">حذف</button>
                         </div>
                         </div>
                     )}
@@ -157,7 +165,7 @@ export default function BannerAdminPage() {
         <hr className="my-6" />
 
         <h2 className="text-lg font-bold mb-4">
-          {editingIndex === null ? 'افزودن بنر جدید' : 'ویرایش بنر'}
+          {editingId === null ? 'افزودن بنر جدید' : 'ویرایش بنر'}
         </h2>
 
         {errors.length > 0 && (
@@ -194,7 +202,7 @@ export default function BannerAdminPage() {
 
         <div className="flex gap-4 rtl:space-x-reverse">
           <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>
-            {editingIndex === null ? 'افزودن' : 'ذخیره'}
+            {editingId === null ? 'افزودن' : 'ذخیره'}
           </button>
           <button className="text-gray-600" onClick={resetForm}>انصراف</button>
         </div>

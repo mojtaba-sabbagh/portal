@@ -1,18 +1,15 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import yaml from 'js-yaml';
 import { NextRequest, NextResponse } from 'next/server';
-
-const filePath = path.join(process.cwd(), 'public/data', 'banners.yaml');
+import { reorderBanners } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
-    const newOrder = await req.json();
-    if (!Array.isArray(newOrder)) throw new Error("Invalid data");
+    const items = await req.json();
+    if (!Array.isArray(items)) throw new Error("Invalid data");
 
-    await fs.writeFile(filePath, yaml.dump(newOrder), 'utf-8');
+    await reorderBanners(items);
     return NextResponse.json({ success: true });
   } catch (err) {
+    console.error("API ERROR:", err);
     return NextResponse.json({ error: 'Failed to reorder' }, { status: 500 });
   }
 }

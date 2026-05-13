@@ -3,17 +3,19 @@
 import { useEffect, useState } from 'react';
 
 interface Contact {
+  id: number;
   unit: string;
   name: string;
-  internal: string;
-  external: string;
+  internal: string | number;
+  external: string | number;
+  tab: string;
 }
 
 export default function ContactsAdminPage() {
   const [contacts, setContacts] = useState<Record<string, Contact[]>>({});
   const [activeTab, setActiveTab] = useState<string>('');
-  const [newEntry, setNewEntry] = useState<Contact>({ unit: '', name: '', internal: '', external: '' });
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [newEntry, setNewEntry] = useState<Omit<Contact, 'id' | 'tab'>>({ unit: '', name: '', internal: '', external: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch('/api/contacts')
@@ -25,46 +27,63 @@ export default function ContactsAdminPage() {
       });
   }, []);
 
-  const handleChange = (field: keyof Contact, value: string) => {
+  const handleChange = (field: keyof Omit<Contact, 'id' | 'tab'>, value: string) => {
     setNewEntry(prev => ({ ...prev, [field]: value }));
   };
 
   const saveEntry = async () => {
-    const updatedTab = [...(contacts[activeTab] || [])];
+    const payload = {
+      ...newEntry,
+      tab: activeTab,
+    };
 
-    if (editingIndex !== null) {
-      updatedTab[editingIndex] = newEntry;
+    if (editingId !== null) {
+      await fetch('/api/contacts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editingId, ...payload }),
+      });
     } else {
-      updatedTab.push(newEntry);
+      await fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
     }
 
-    const updated = { ...contacts, [activeTab]: updatedTab };
-    setContacts(updated);
     setNewEntry({ unit: '', name: '', internal: '', external: '' });
-    setEditingIndex(null);
-
-    await fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
-    });
+    setEditingId(null);
+    
+    // Reload contacts
+    const res = await fetch('/api/contacts');
+    const data = await res.json();
+    setContacts(data);
   };
 
-  const editEntry = (index: number) => {
-    setNewEntry(contacts[activeTab][index]);
-    setEditingIndex(index);
+  const editEntry = (id: number) => {
+    const contact = contacts[activeTab]?.find(c => c.id === id);
+    if (contact) {
+      setNewEntry({
+        unit: contact.unit,
+        name: contact.name,
+        internal: contact.internal,
+        external: contact.external,
+      });
+      setEditingId(id);
+    }
   };
 
-  const deleteEntry = async (index: number) => {
-    const updatedTab = [...contacts[activeTab]];
-    updatedTab.splice(index, 1);
-    const updated = { ...contacts, [activeTab]: updatedTab };
-    setContacts(updated);
+  const deleteEntry = async (id: number) => {
     await fetch('/api/contacts', {
-      method: 'POST',
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
+      body: JSON.stringify({ id }),
     });
+    
+    // Reload contacts
+    const res = await fetch('/api/contacts');
+    const data = await res.json();
+    setContacts(data);
   };
 
   return (
@@ -96,15 +115,15 @@ export default function ContactsAdminPage() {
           </tr>
         </thead>
         <tbody>
-          {contacts[activeTab]?.map((entry, index) => (
-            <tr key={index} className="text-center">
+          {contacts[activeTab]?.map((entry) => (
+            <tr key={entry.id} className="text-center">
               <td className="p-2 border">{entry.unit}</td>
               <td className="p-2 border">{entry.name}</td>
               <td className="p-2 border">{entry.internal}</td>
               <td className="p-2 border">{entry.external}</td>
               <td className="p-2 border space-x-2 rtl:space-x-reverse">
-                <button onClick={() => editEntry(index)} className="text-yellow-600">ویرایش</button>
-                <button onClick={() => deleteEntry(index)} className="text-red-600">حذف</button>
+                <button onClick={() => editEntry(entry.id)} className="text-yellow-600">ویرایش</button>
+                <button onClick={() => deleteEntry(entry.id)} className="text-red-600">حذف</button>
               </td>
             </tr>
           ))}
@@ -142,7 +161,7 @@ export default function ContactsAdminPage() {
           onChange={e => handleChange('external', e.target.value)}
         />
         <button onClick={saveEntry} className="bg-blue-600 text-white px-4 py-2 rounded">
-          {editingIndex !== null ? 'ذخیره ویرایش' : 'افزودن'}
+          {editingId !== null ? 'ذخیره ویرایش' : 'افزودن'}
         </button>
       </div>
     </main>

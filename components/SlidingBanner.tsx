@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import yaml from 'js-yaml';
 import Link from 'next/link';
 
 interface Banner {
+  id: number;
   title: string;
   image: string;
   link: string;
@@ -15,10 +15,13 @@ export default function SlidingBanner() {
 
   useEffect(() => {
     async function fetchBanners() {
-      const res = await fetch('/data/banners.yaml');
-      const text = await res.text();
-      const data = yaml.load(text) as Banner[];
-      setBanners(data);
+      try {
+        const res = await fetch('/api/banners');
+        const data = await res.json();
+        setBanners(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch banners:', error);
+      }
     }
     fetchBanners();
   }, []);

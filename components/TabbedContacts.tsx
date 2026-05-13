@@ -1,29 +1,39 @@
 'use client';
 import { useEffect, useState } from 'react';
-import yaml from 'js-yaml';
 
 interface Contact {
+  id: number;
   unit: string;
   name: string;
-  internal: string;
-  external: string;
+  internal: string | number;
+  external: string | number;
+  tab: string;
 }
 
 export default function TabbedContacts() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2'>('tab1');
-  const [tab1Data, setTab1Data] = useState<Contact[]>([]);
-  const [tab2Data, setTab2Data] = useState<Contact[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('');
+  const [allContacts, setAllContacts] = useState<{ [key: string]: Contact[] }>({});
+  const [tabs, setTabs] = useState<string[]>([]);
 
   useEffect(() => {
     async function fetchContacts() {
-      const res = await fetch('/data/contacts.yaml');
-      const text = await res.text();
-      const data = yaml.load(text) as { tab1: Contact[]; tab2: Contact[] };
-      setTab1Data(data.tab1);
-      setTab2Data(data.tab2);
+      try {
+        const res = await fetch('/api/contacts');
+        const data = await res.json();
+        setAllContacts(data);
+        const tabNames = Object.keys(data);
+        setTabs(tabNames);
+        if (tabNames.length > 0) {
+          setActiveTab(tabNames[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch contacts:', error);
+      }
     }
     fetchContacts();
   }, []);
+
+  const currentData = allContacts[activeTab] || [];
 
   function renderTable(data: Contact[]) {
     return (
@@ -40,7 +50,7 @@ export default function TabbedContacts() {
           <tbody>
             {data.map((row, idx) => (
               <tr
-                key={idx}
+                key={row.id}
                 className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
               >
                 <td className="px-2 py-2">{row.unit}</td>
@@ -57,39 +67,27 @@ export default function TabbedContacts() {
 
   return (
     <div className="tabs employees mt-10">
-      <div className="tab-buttons flex gap-2 mb-5 justify-center">
-        <button
-          onClick={() => setActiveTab('tab1')}
-          className={`px-4 py-2 rounded shadow-sm font-medium ${
-            activeTab === 'tab1'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-          }`}
-        >
-          تلفن‌های کوثر کویر رفسنجان
-        </button>
-        <button
-          onClick={() => setActiveTab('tab2')}
-          className={`px-4 py-2 rounded shadow-sm font-medium ${
-            activeTab === 'tab2'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-          }`}
-        >
-          تلفن‌های هاگ
-        </button>
+      <div className="tab-buttons flex gap-2 mb-5 justify-center flex-wrap">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded shadow-sm font-medium ${
+              activeTab === tab
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      <div className={activeTab === 'tab1' ? 'block' : 'hidden'}>
-        {renderTable(tab1Data)}
-      </div>
-
-      <div className={activeTab === 'tab2' ? 'block' : 'hidden'}>
-        <div className="text-center mb-4 text-lg font-medium">
-          تلفن هاگ: ۰۹۱۰۷۲۶۶۷
+      {activeTab && (
+        <div>
+          {renderTable(currentData)}
         </div>
-        {renderTable(tab2Data)}
-      </div>
+      )}
     </div>
   );
 }

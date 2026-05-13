@@ -1,28 +1,71 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import yaml from 'js-yaml';
 import { NextRequest, NextResponse } from 'next/server';
-
-const filePath = path.join(process.cwd(), 'public/data', 'contacts.yaml');
+import { getContacts, getDb } from '@/lib/db';
 
 export async function GET() {
   try {
-    const file = await fs.readFile(filePath, 'utf-8');
-    const data = yaml.load(file);
+    const data = await getContacts();
     return NextResponse.json(data);
   } catch (err) {
-    console.error('Failed to read contacts.yaml:', err);
+    console.error('Failed to read contacts:', err);
     return NextResponse.json({ error: 'Failed to read contacts' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const updatedContacts = await req.json();
-    await fs.writeFile(filePath, yaml.dump(updatedContacts), 'utf-8');
+    const { tab, unit, name, internal, external } = await req.json();
+    const db = getDb();
+    
+    const result = await db.contact.create({
+      data: {
+        tab,
+        unit,
+        name,
+        internal: String(internal),
+        external: String(external),
+      },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Failed to add contact:', err);
+    return NextResponse.json({ error: 'Failed to save contact' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { id, tab, unit, name, internal, external } = await req.json();
+    const db = getDb();
+    
+    const result = await db.contact.update({
+      where: { id },
+      data: {
+        tab,
+        unit,
+        name,
+        internal: String(internal),
+        external: String(external),
+      },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Failed to update contact:', err);
+    return NextResponse.json({ error: 'Failed to save contacts' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+    const db = getDb();
+    
+    await db.contact.delete({ where: { id } });
+    
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('Failed to write contacts.yaml:', err);
-    return NextResponse.json({ error: 'Failed to save contacts' }, { status: 500 });
+    console.error('Failed to delete contact:', err);
+    return NextResponse.json({ error: 'Failed to delete contact' }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface NewsItem {
+  id: number;
   title: string;
   description: string;
   date: string;
@@ -12,8 +13,8 @@ interface NewsItem {
 
 export default function NewsAdminPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [form, setForm] = useState<NewsItem>({ title: '', description: '', date: '', image: '' });
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [form, setForm] = useState<Omit<NewsItem, 'id'>>({ title: '', description: '', date: '', image: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -27,14 +28,14 @@ export default function NewsAdminPage() {
     loadNews();
   }, []);
 
-  const handleChange = (field: keyof NewsItem, value: string) => {
+  const handleChange = (field: keyof Omit<NewsItem, 'id'>, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const resetForm = () => {
     setForm({ title: '', description: '', date: '', image: '' });
     setFile(null);
-    setEditingIndex(null);
+    setEditingId(null);
     setErrors([]);
   };
 
@@ -73,30 +74,31 @@ export default function NewsAdminPage() {
     const payload = { ...form, image: imagePath };
 
     await fetch('/api/news', {
-      method: editingIndex === null ? 'POST' : 'PUT',
+      method: editingId === null ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        editingIndex === null ? payload : { index: editingIndex, item: payload }
-      ),
+      body: JSON.stringify(editingId === null ? payload : { id: editingId, ...payload }),
     });
 
     resetForm();
     loadNews();
   };
 
-  const handleDelete = async (index: number) => {
+  const handleDelete = async (id: number) => {
     await fetch('/api/news', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ index }),
+      body: JSON.stringify({ id }),
     });
     loadNews();
   };
 
-  const startEdit = (index: number) => {
-    setEditingIndex(index);
-    setForm(news[index]);
-    setFile(null);
+  const startEdit = (id: number) => {
+    const item = news.find(n => n.id === id);
+    if (item) {
+      setEditingId(id);
+      setForm({ title: item.title, description: item.description, date: item.date, image: item.image });
+      setFile(null);
+    }
   };
 
   const onDragEnd = async (result: any) => {
@@ -106,10 +108,16 @@ export default function NewsAdminPage() {
     reordered.splice(result.destination.index, 0, moved);
     setNews(reordered);
 
+    // Save new order with IDs
+    const reorderData = reordered.map((item, index) => ({
+      id: item.id,
+      order: index,
+    }));
+
     await fetch('/api/news/reorder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reordered),
+      body: JSON.stringify(reorderData),
     });
   };
 
@@ -123,7 +131,7 @@ export default function NewsAdminPage() {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-4">
                 {news.map((item, idx) => (
-                  <Draggable key={String(idx)} draggableId={String(idx)} index={idx}>
+                  <Draggable key={String(item.id)} draggableId={String(item.id)} index={idx}>
                     {(dragProvided) => (
                       <div
                         ref={dragProvided.innerRef}
@@ -136,8 +144,8 @@ export default function NewsAdminPage() {
                         <p className="text-sm text-gray-700">{item.description}</p>
                         <p className="text-xs text-gray-500 mt-1">{item.date}</p>
                         <div className="mt-2 flex gap-4 rtl:space-x-reverse">
-                          <button onClick={() => startEdit(idx)} className="text-yellow-600 hover:underline">ویرایش</button>
-                          <button onClick={() => handleDelete(idx)} className="text-red-600 hover:underline">حذف</button>
+                          <button onClick={() => startEdit(item.id)} className="text-yellow-600 hover:underline">ویرایش</button>
+                          <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:underline">حذف</button>
                         </div>
                       </div>
                     )}
@@ -152,7 +160,7 @@ export default function NewsAdminPage() {
         <hr className="my-6" />
 
         <h2 className="text-lg font-bold mb-4">
-          {editingIndex === null ? 'افزودن خبر جدید' : 'ویرایش خبر'}
+          {editingId === null ? 'افزودن خبر جدید' : 'ویرایش خبر'}
         </h2>
 
         {errors.length > 0 && (
@@ -195,7 +203,7 @@ export default function NewsAdminPage() {
 
         <div className="flex gap-4 rtl:space-x-reverse">
           <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>
-            {editingIndex === null ? 'افزودن' : 'ذخیره'}
+            {editingId === null ? 'افزودن' : 'ذخیره'}
           </button>
           <button className="text-gray-600" onClick={resetForm}>انصراف</button>
         </div>

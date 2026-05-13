@@ -1,31 +1,59 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import yaml from 'js-yaml';
 import { NextRequest, NextResponse } from 'next/server';
-
-const filePath = path.join(process.cwd(), 'public/data', 'videos.yaml');
+import { getVideos, getDb } from '@/lib/db';
 
 export async function GET() {
   try {
-    const file = await fs.readFile(filePath, 'utf-8');
-    const data = yaml.load(file);
+    const data = await getVideos();
     return NextResponse.json(data);
   } catch (err) {
-    console.error('Error reading videos.yaml:', err);
-    return NextResponse.json({ error: 'Failed to load videos.yaml' }, { status: 500 });
+    console.error('Error reading videos:', err);
+    return NextResponse.json({ error: 'Failed to load videos' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    if (!Array.isArray(body)) {
-      return NextResponse.json({ error: 'Invalid format: expected an array of categories' }, { status: 400 });
-    }
-    await fs.writeFile(filePath, yaml.dump(body), 'utf-8');
+    const { category, label, src } = await req.json();
+    const db = getDb();
+    
+    const result = await db.video.create({
+      data: { category, label, src },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Error adding video:', err);
+    return NextResponse.json({ error: 'Failed to add video' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { id, category, label, src } = await req.json();
+    const db = getDb();
+    
+    const result = await db.video.update({
+      where: { id },
+      data: { category, label, src },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Error updating video:', err);
+    return NextResponse.json({ error: 'Failed to update video' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+    const db = getDb();
+    
+    await db.video.delete({ where: { id } });
+    
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('Error writing videos.yaml:', err);
-    return NextResponse.json({ error: 'Failed to write videos.yaml' }, { status: 500 });
+    console.error('Error deleting video:', err);
+    return NextResponse.json({ error: 'Failed to delete video' }, { status: 500 });
   }
 }

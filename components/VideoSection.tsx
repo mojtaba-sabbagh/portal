@@ -1,7 +1,6 @@
 // components/VideoSection.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import yaml from 'js-yaml';
 
 interface Video {
   label: string;
@@ -18,10 +17,13 @@ export default function VideoSection() {
 
   useEffect(() => {
     async function fetchVideos() {
-      const res = await fetch('/data/videos.yaml');
-      const text = await res.text();
-      const data = yaml.load(text) as VideoCategory[];
-      setVideoData(data);
+      try {
+        const res = await fetch('/api/videos');
+        const data = await res.json();
+        setVideoData(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch videos:', error);
+      }
     }
     fetchVideos();
   }, []);
@@ -29,8 +31,8 @@ export default function VideoSection() {
   return (
     <section className="mt-10">
       <h2 className="text-xl font-bold mb-6">ویدئوهای آموزشی و معرفی</h2>
-      {videoData.map((group, idx) => (
-        <div key={idx} className="mb-10">
+      {videoData.map((group) => (
+        <div key={group.category} className="mb-10">
           <h3 className="text-lg font-semibold mb-4 border-b pb-1 border-gray-300">{group.category}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {group.videos.map((video, vIdx) => (

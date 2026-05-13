@@ -1,9 +1,9 @@
 // components/News.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import yaml from 'js-yaml';
 
 interface NewsItem {
+  id: number;
   title: string;
   description: string;
   image?: string;
@@ -15,10 +15,13 @@ export default function News() {
 
   useEffect(() => {
     async function fetchNews() {
-      const res = await fetch('/data/news.yaml');
-      const text = await res.text();
-      const data = yaml.load(text) as NewsItem[];
-      setNewsItems(data);
+      try {
+        const res = await fetch('/api/news');
+        const data = await res.json();
+        setNewsItems(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch news:', error);
+      }
     }
     fetchNews();
   }, []);
@@ -27,9 +30,9 @@ export default function News() {
     <section className="mt-10">
       <h2 className="text-xl font-bold mb-6">اخبار</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {newsItems.map((item, idx) => (
+        {newsItems.map((item) => (
           <div
-            key={idx}
+            key={item.id}
             className="flex bg-white border-r-4 border-green-500 rounded-md shadow-sm overflow-hidden"
           >
             <img

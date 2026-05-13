@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "contacts" ALTER COLUMN "internal" SET DATA TYPE TEXT,
+ALTER COLUMN "external" SET DATA TYPE TEXT;

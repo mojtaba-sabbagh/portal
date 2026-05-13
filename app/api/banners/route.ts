@@ -1,17 +1,9 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
-import yaml from 'js-yaml';
-
-const filePath = path.join(process.cwd(), 'public/data', 'banners.yaml');
+import { getBanners, getDb } from '@/lib/db';
 
 export async function GET() {
   try {
-    const file = await fs.readFile(filePath, 'utf-8');
-    const banners = yaml.load(file);
-
-    if (!Array.isArray(banners)) throw new Error("Invalid YAML format");
-
+    const banners = await getBanners();
     return NextResponse.json(banners);
   } catch (err) {
     console.error("API ERROR:", err);
@@ -19,42 +11,49 @@ export async function GET() {
   }
 }
 
-
 export async function POST(req: NextRequest) {
   try {
-    const banner = await req.json();
-    const file = await fs.readFile(filePath, 'utf-8');
-    const banners = (yaml.load(file) || []) as any[];
-    banners.push(banner);
-    await fs.writeFile(filePath, yaml.dump(banners), 'utf-8');
-    return NextResponse.json({ success: true });
+    const { title, image, link } = await req.json();
+    const db = getDb();
+    
+    const result = await db.banner.create({
+      data: { title, image, link },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
   } catch (err) {
+    console.error("API ERROR:", err);
     return NextResponse.json({ error: 'Failed to add banner' }, { status: 500 });
   }
 }
 
 export async function PUT(req: NextRequest) {
   try {
-    const { index, banner } = await req.json();
-    const file = await fs.readFile(filePath, 'utf-8');
-    const banners = yaml.load(file) as any[];
-    banners[index] = banner;
-    await fs.writeFile(filePath, yaml.dump(banners), 'utf-8');
-    return NextResponse.json({ success: true });
+    const { id, title, image, link } = await req.json();
+    const db = getDb();
+    
+    const result = await db.banner.update({
+      where: { id },
+      data: { title, image, link },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
   } catch (err) {
+    console.error("API ERROR:", err);
     return NextResponse.json({ error: 'Failed to update banner' }, { status: 500 });
   }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { index } = await req.json();
-    const file = await fs.readFile(filePath, 'utf-8');
-    const banners = yaml.load(file) as any[];
-    banners.splice(index, 1);
-    await fs.writeFile(filePath, yaml.dump(banners), 'utf-8');
+    const { id } = await req.json();
+    const db = getDb();
+    
+    await db.banner.delete({ where: { id } });
+    
     return NextResponse.json({ success: true });
   } catch (err) {
+    console.error("API ERROR:", err);
     return NextResponse.json({ error: 'Failed to delete banner' }, { status: 500 });
   }
 }

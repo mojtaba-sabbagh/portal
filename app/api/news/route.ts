@@ -1,43 +1,59 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
-import yaml from 'js-yaml';
-
-const filePath = path.join(process.cwd(), 'public/data', 'news.yaml');
+import { getNews, getDb } from '@/lib/db';
 
 export async function GET() {
   try {
-    const file = await fs.readFile(filePath, 'utf-8');
-    const news = yaml.load(file);
+    const news = await getNews();
     return NextResponse.json(news);
-  } catch {
+  } catch (err) {
+    console.error('Failed to read news:', err);
     return NextResponse.json({ error: 'Failed to read news' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
-  const newItem = await req.json();
-  const file = await fs.readFile(filePath, 'utf-8');
-  const news = (yaml.load(file) || []) as any[];
-  news.push(newItem);
-  await fs.writeFile(filePath, yaml.dump(news), 'utf-8');
-  return NextResponse.json({ success: true });
+  try {
+    const { title, description, date, image } = await req.json();
+    const db = getDb();
+    
+    const result = await db.news.create({
+      data: { title, description, date, image },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Failed to add news:', err);
+    return NextResponse.json({ error: 'Failed to add news' }, { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest) {
-  const { index, item } = await req.json();
-  const file = await fs.readFile(filePath, 'utf-8');
-  const news = yaml.load(file) as any[];
-  news[index] = item;
-  await fs.writeFile(filePath, yaml.dump(news), 'utf-8');
-  return NextResponse.json({ success: true });
+  try {
+    const { id, title, description, date, image } = await req.json();
+    const db = getDb();
+    
+    const result = await db.news.update({
+      where: { id },
+      data: { title, description, date, image },
+    });
+    
+    return NextResponse.json({ success: true, data: result });
+  } catch (err) {
+    console.error('Failed to update news:', err);
+    return NextResponse.json({ error: 'Failed to update news' }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
-  const { index } = await req.json();
-  const file = await fs.readFile(filePath, 'utf-8');
-  const news = yaml.load(file) as any[];
-  news.splice(index, 1);
-  await fs.writeFile(filePath, yaml.dump(news), 'utf-8');
-  return NextResponse.json({ success: true });
+  try {
+    const { id } = await req.json();
+    const db = getDb();
+    
+    await db.news.delete({ where: { id } });
+    
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('Failed to delete news:', err);
+    return NextResponse.json({ error: 'Failed to delete news' }, { status: 500 });
+  }
 }

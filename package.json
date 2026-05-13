@@ -3,20 +3,23 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev -p 4000 --turbopack",
-    "start": "next start -p 3000"
+    "start": "next start -p 3000",
+    "db:setup": "tsx scripts/setup-db.ts",
+    "db:migrate": "tsx scripts/migrate-yaml-to-db.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^7.8.0",
     "@tailwindcss/forms": "^0.5.10",
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.4.2",
     "js-yaml": "^4.1.0",
     "next": "^16.2.4",
     "next-auth": "5.0.0-beta.25",
     "nodemailer": "^6.10.1",
     "postcss": "8.5.1",
-    "postgres": "^3.4.6",
     "react": "^19.2.5",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.2.5",
@@ -26,18 +29,26 @@
     "zod": "^3.25.17"
   },
   "devDependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@types/bcrypt": "^5.0.2",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "22.10.7",
     "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.20.0",
     "@types/react": "19.0.7",
     "@types/react-beautiful-dnd": "^13.1.8",
-    "@types/react-dom": "19.0.3"
+    "@types/react-dom": "19.0.3",
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "tsx": "^4.21.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "bcrypt",
       "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "esbuild"
     ]
   }
 }
