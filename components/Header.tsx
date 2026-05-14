@@ -41,7 +41,17 @@ export default function Header() {
         {/* Right: Company logo */}
         <div className="flex-shrink-0">
           <Link href="/">
-            <Image src="/logo.png" alt="لوگوی شرکت" width={120} height={40} />
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={400}
+              height={124}
+              style={{
+                width: 'auto',      // Or a specific width like '200px'
+                height: 'auto',     // Preserves aspect ratio
+              }}
+              preload={true}
+            />
           </Link>
         </div>
 
