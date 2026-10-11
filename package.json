@@ -5,7 +5,8 @@
     "dev": "next dev -p 4000 --turbopack",
     "start": "next start -p 3000",
     "db:setup": "tsx scripts/setup-db.ts",
-    "db:migrate": "tsx scripts/migrate-yaml-to-db.ts"
+    "db:migrate": "tsx scripts/migrate-yaml-to-db.ts",
+    "db:remove-contact-tab": "tsx scripts/remove-contact-tab.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -41,14 +42,5 @@
     "@types/react-dom": "19.0.3",
     "pg": "^8.20.0",
     "tsx": "^4.21.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "bcrypt",
-      "sharp"
-    ],
-    "ignoredBuiltDependencies": [
-      "esbuild"
-    ]
   }
 }

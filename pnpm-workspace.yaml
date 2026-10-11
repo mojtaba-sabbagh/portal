@@ -1,0 +1,22 @@
+# pnpm project configuration.
+#
+# Since pnpm 11 the "pnpm" field in package.json is no longer read, all settings
+# have to live here (pnpm 10.34 also reads this file). Dependency install/build
+# scripts only run when they are listed under "allowBuilds":
+#   true  -> the package may run its install/build scripts
+#   false -> explicitly denied (also stops pnpm 11+ from failing the install)
+#
+# pnpm 11+ makes an *unlisted* build script a hard error (ERR_PNPM_IGNORED_BUILDS),
+# so every dependency that has one must be listed here.
+allowBuilds:
+  # bcrypt compiles/loads a native binding used for admin password hashing.
+  bcrypt: true
+  # sharp's install script only verifies the prebuilt libvips binaries that ship
+  # as separate npm packages (@img/sharp-linux-x64), required by next/image.
+  sharp: true
+  # Not needed: their platform binaries are separate npm packages that pnpm
+  # installs anyway (@esbuild/linux-x64), and the Prisma CLI downloads the
+  # engine it needs when it runs - so their scripts are skipped on purpose.
+  '@prisma/engines': false
+  esbuild: false
+  prisma: false

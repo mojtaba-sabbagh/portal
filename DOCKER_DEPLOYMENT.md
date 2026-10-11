@@ -212,6 +212,46 @@ docker-compose exec postgres pg_dump -U postgres -d portal > backup.sql
 docker-compose exec -T postgres psql -U postgres -d portal < backup.sql
 ```
 
+## Removing a Contacts Tab (Phone Table) from the Live Site
+
+The phone directory is **not** read from `public/data/contacts.yaml` at runtime any
+more — it lives in the `contacts` table of PostgreSQL and is exposed through
+`/api/contacts`. Deleting a tab from that YAML file (for example the HAG phone
+table) therefore does **not** remove it from a running site: the old rows are still
+in the database and are still rendered.
+
+See which tabs the database currently contains:
+
+```bash
+docker-compose exec postgres psql -U postgres -d portal \
+  -c "SELECT tab, COUNT(*) FROM contacts GROUP BY tab ORDER BY tab;"
+```
+
+Delete the tab — the exact `tab` value, or a partial match with `ILIKE`:
+
+```bash
+# exact tab value (e.g. the raw YAML key used by the first migration)
+docker-compose exec postgres psql -U postgres -d portal \
+  -c "DELETE FROM contacts WHERE tab = 'tab2';"
+
+# any tab whose name contains "هاگ"
+docker-compose exec postgres psql -U postgres -d portal \
+  -c "DELETE FROM contacts WHERE tab ILIKE '%هاگ%';"
+```
+
+> Replace `postgres` with the real container name on the host (`docker ps` — on the
+> production server it is `postgres-forms`, database `portal`).
+
+From a source checkout the same cleanup is available as a script; it uses
+`DATABASE_URL` from `.env.local`, `.env` or the environment:
+
+```bash
+pnpm db:remove-contact-tab --list             # show every tab and its row count
+pnpm db:remove-contact-tab "tab2" --dry-run   # preview an exact tab
+pnpm db:remove-contact-tab "tab2"             # delete an exact tab
+pnpm db:remove-contact-tab "هاگ" --like       # delete every tab containing "هاگ"
+```
+
 ## Cleanup
 
 ```bash

@@ -4,19 +4,32 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apt-get update && apt-get install -y python3 make g++ openssl && rm -rf /var/lib/apt/lists/*
+# Pin the package manager. `npm install -g pnpm` without a version now installs
+# pnpm 11/12, which ignores the package.json "pnpm" field, has to be told about
+# every approved dependency build script (otherwise the install fails with
+# ERR_PNPM_IGNORED_BUILDS) and re-verifies the whole lockfile against
+# supply-chain policies on every install. 10.34.6 matches pnpm-lock.yaml v9.
+ARG PNPM_VERSION=10.34.6
 
-COPY package.json pnpm-lock.yaml* ./
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update -o Acquire::Retries=5 \
+    && apt-get install -y --no-install-recommends python3 make g++ openssl -o Acquire::Retries=5 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# The store lives in a cache mount so a failed/slow download is reused by the
+# next build instead of being downloaded again.
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    npm install -g pnpm@${PNPM_VERSION} && pnpm install --frozen-lockfile
 
-# Generate Prisma client and copy real files (works with pnpm)
-RUN npx prisma generate && \
-    mkdir -p /tmp/prisma-client && \
-    cp -rL $(find node_modules -type d -name "@prisma" -print -quit) /tmp/prisma-client/@prisma && \
-    (find node_modules -type d -name ".prisma" -print -quit | xargs -r cp -rL -t /tmp/prisma-client/.prisma) || true
+# Generate the Prisma client. It is written into the pnpm virtual store
+# (node_modules/.pnpm/@prisma+client@.../node_modules/.prisma), which Next's
+# output tracing copies into .next/standalone together with the pnpm symlinks.
+RUN pnpm exec prisma generate
 
 COPY . .
 COPY .env.local .env.local
@@ -39,10 +52,11 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-RUN rm -rf ./node_modules/@prisma
-
-# Copy Prisma client (real files, not symlinks)
-COPY --from=builder /tmp/prisma-client/@prisma ./node_modules/@prisma
+# NOTE: node_modules/@prisma is left exactly as Next traced it (a folder of pnpm
+# symlinks into node_modules/.pnpm). Replacing it with dereferenced copies breaks
+# the generated client, because @prisma/client resolves the sibling paths
+# .prisma/client and @prisma/client-runtime-utils that only exist inside the pnpm
+# virtual store (otherwise: Cannot find module '.prisma/client/default').
 
 # Copy Prisma schema and config for runtime
 COPY --from=builder /app/prisma ./prisma
